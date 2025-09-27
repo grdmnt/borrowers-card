@@ -3,7 +3,7 @@
 -- can see the same record from their respective perspectives
 
 -- Add the lender_user_id column
-ALTER TABLE borrowed_items 
+ALTER TABLE borrowed_items
 ADD COLUMN lender_user_id UUID REFERENCES auth.users(id);
 
 -- Add comment to document the column purpose

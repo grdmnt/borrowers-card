@@ -8,13 +8,15 @@ interface BorrowedItemCardProps {
   onEdit: (item: BorrowedItem) => void;
   onUpdate: (item: BorrowedItem) => void;
   onDelete: (itemId: string) => void;
+  perspective?: 'borrower' | 'lender';
 }
 
 const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
   item,
   onEdit,
   onUpdate,
-  onDelete
+  onDelete,
+  perspective = 'borrower'
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
@@ -22,16 +24,16 @@ const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
 
   // Calculate if item is overdue
   const isOverdue = item.status === 'active' && item.due_date && new Date(item.due_date) < new Date();
-  
+
   // Calculate days until due or days overdue
   const getDaysInfo = () => {
     if (!item.due_date || item.status !== 'active') return null;
-    
+
     const today = new Date();
     const dueDate = new Date(item.due_date);
     const diffTime = dueDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays < 0) {
       return { type: 'overdue', days: Math.abs(diffDays) };
     } else if (diffDays <= 7) {
@@ -91,9 +93,9 @@ const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
 
   return (
     <>
-      <Card 
-        variant="elevated" 
-        hover 
+      <Card
+        variant="elevated"
+        hover
         className={`${styles.itemCard} ${isOverdue ? styles.overdue : ''}`}
       >
         <CardHeader>
@@ -118,7 +120,7 @@ const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
               <span className={styles.label}>Borrowed from:</span>
               <span className={styles.value}>{item.borrowed_from_name}</span>
             </div>
-            
+
             <div className={styles.detailRow}>
               <span className={styles.label}>Borrowed on:</span>
               <span className={styles.value}>{formatDate(item.borrowed_date)}</span>

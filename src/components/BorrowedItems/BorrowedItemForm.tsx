@@ -122,7 +122,7 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -131,7 +131,7 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
 
     try {
       let result;
-      
+
       // Clean the form data - convert empty strings to undefined for optional fields
       const cleanedData = {
         ...formData,
@@ -139,7 +139,7 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
         due_date: formData.due_date?.trim() || undefined,
         notes: formData.notes?.trim() || undefined,
       };
-      
+
       if (mode === 'create') {
         result = await borrowedItemsService.createBorrowedItem(cleanedData);
       } else if (item) {

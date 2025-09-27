@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select, Loading, Badge } from '@/components/UI';
-import BorrowedItemCard from './BorrowedItemCard';
+import BorrowedItemCard from '../BorrowedItems/BorrowedItemCard';
 import { BorrowedItem, BorrowedItemsFilters, BorrowedItemsSort, borrowedItemsService } from '@/services/borrowedItems';
 import styles from '@/styles/components/ItemsList.module.css';
 
-interface BorrowedItemsListProps {
+interface LentItemsListProps {
   onAddItem: () => void;
   onEditItem: (item: BorrowedItem) => void;
-  refreshTrigger?: number; // Used to trigger refresh from parent
+  refreshTrigger?: number;
   listTitle?: string;
   addButtonText?: string;
   emptyStateTitle?: string;
   emptyStateMessage?: string;
   emptyStateButtonText?: string;
+  searchPlaceholder?: string;
 }
 
-const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
+const LentItemsList: React.FC<LentItemsListProps> = ({
   onAddItem,
   onEditItem,
   refreshTrigger,
-  listTitle = 'Your Borrowed Items',
-  addButtonText = 'Add Borrowed Item',
-  emptyStateTitle = 'No Borrowed Items Found',
-  emptyStateMessage = 'Try adjusting your filters or search terms.',
-  emptyStateButtonText = 'Add Your First Borrowed Item'
+  listTitle = 'Your Lent Items',
+  addButtonText = 'Add Lent Item',
+  emptyStateTitle = 'No Lent Items Found',
+  emptyStateMessage = 'Start by adding your first lent item to keep track of things you\'ve lent to others.',
+  emptyStateButtonText = 'Add Your First Lent Item',
+  searchPlaceholder = 'Search items, descriptions, or borrowers...'
 }) => {
   const [items, setItems] = useState<BorrowedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,10 +39,8 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
     { value: '', label: 'All Statuses' },
     { value: 'active', label: 'Active' },
     { value: 'returned', label: 'Returned' },
-    { value: 'overdue', label: 'Overdue' },
-    { value: 'lost', label: 'Lost' }
+    { value: 'overdue', label: 'Overdue' }
   ];
-
 
   const sortOptions = [
     { value: 'borrowed_date:desc', label: 'Newest First' },
@@ -53,91 +53,82 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
 
   // Load items
   const loadItems = async () => {
-    setLoading(true);
-    setError(null);
-
     try {
-      const result = await borrowedItemsService.getBorrowedItems(filters, sort);
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setItems(result.data || []);
+      setLoading(true);
+      setError(null);
+
+      const searchFilters: BorrowedItemsFilters = {
+        ...filters,
+        search: searchTerm || undefined
+      };
+
+      const { data, error: fetchError } = await borrowedItemsService.getLentItems(searchFilters, sort);
+      
+      if (fetchError) {
+        setError(fetchError);
+        return;
       }
+
+      setItems(data || []);
     } catch (err) {
-      console.error('Error loading items:', err);
-      setError('Failed to load borrowed items');
+      setError('Failed to load lent items');
+      console.error('Error loading lent items:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Load items on mount and when filters/sort change
+  // Load items on mount and when dependencies change
   useEffect(() => {
     loadItems();
-  }, [filters, sort, refreshTrigger]);
-
-  // Handle search with debounce
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setFilters(prev => ({ ...prev, search: searchTerm || undefined }));
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  }, [filters, sort, searchTerm, refreshTrigger]);
 
   // Handle filter changes
-  const handleStatusFilter = (status: string) => {
-    setFilters(prev => ({
-      ...prev,
-      status: status ? [status as BorrowedItem['status']] : undefined
-    }));
+  const handleStatusFilter = (value: string) => {
+    const statuses = value ? [value as BorrowedItem['status']] : undefined;
+    setFilters(prev => ({ ...prev, status: statuses }));
   };
 
-
-  const handleSortChange = (sortValue: string) => {
-    const [field, direction] = sortValue.split(':');
-    setSort({
-      field: field as BorrowedItemsSort['field'],
-      direction: direction as 'asc' | 'desc'
-    });
+  const handleSortChange = (value: string) => {
+    const [field, direction] = value.split(':') as [keyof BorrowedItem, 'asc' | 'desc'];
+    setSort({ field, direction });
   };
 
-  const handleOverdueFilter = () => {
-    setFilters(prev => ({
-      ...prev,
-      overdue: !prev.overdue
-    }));
+  const handleOverdueFilter = (checked: boolean) => {
+    setFilters(prev => ({ ...prev, overdue: checked || undefined }));
   };
 
-  // Handle item updates
-  const handleItemUpdate = (updatedItem: BorrowedItem) => {
-    setItems(prev => prev.map(item =>
-      item.id === updatedItem.id ? updatedItem : item
-    ));
+  // Calculate counts
+  const counts = {
+    total: items.length,
+    active: items.filter(item => item.status === 'active').length,
+    returned: items.filter(item => item.status === 'returned').length,
+    overdue: items.filter(item => {
+      if (item.status !== 'active' || !item.due_date) return false;
+      return new Date(item.due_date) < new Date();
+    }).length,
+    lost: items.filter(item => item.status === 'lost').length
   };
 
-  const handleItemDelete = (itemId: string) => {
-    setItems(prev => prev.filter(item => item.id !== itemId));
-  };
-
-  // Get filtered item counts
-  const getItemCounts = () => {
-    const active = items.filter(item => item.status === 'active').length;
-    const returned = items.filter(item => item.status === 'returned').length;
-    const overdue = items.filter(item =>
-      item.status === 'active' && item.due_date && new Date(item.due_date) < new Date()
-    ).length;
-    const lost = items.filter(item => item.status === 'lost').length;
-
-    return { active, returned, overdue, lost, total: items.length };
-  };
-
-  const counts = getItemCounts();
-
-  if (loading && items.length === 0) {
+  if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <Loading size="lg" variant="spinner" text="Loading borrowed items..." />
+        <Loading size="lg" />
+        <p>Loading your lent items...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorMessage}>
+          <h3>Error Loading Lent Items</h3>
+          <p>{error}</p>
+          <Button variant="ghost" size="sm" onClick={loadItems}>
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
@@ -176,7 +167,7 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
       <div className={styles.filtersSection}>
         <div className={styles.searchRow}>
           <Input
-            placeholder="Search items, descriptions, or lenders..."
+            placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             leftIcon="🔍"
@@ -188,38 +179,28 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
           <Select
             options={statusOptions}
             value={filters.status?.[0] || ''}
-            onChange={(e) => handleStatusFilter(e.target.value)}
+            onChange={handleStatusFilter}
+            placeholder="Filter by status"
             className={styles.filterSelect}
           />
-
 
           <Select
             options={sortOptions}
             value={`${sort.field}:${sort.direction}`}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className={styles.filterSelect}
+            onChange={handleSortChange}
+            className={styles.sortSelect}
           />
 
           <Button
-            variant={filters.overdue ? 'danger' : 'outline'}
+            variant={filters.overdue ? 'primary' : 'ghost'}
             size="sm"
-            onClick={handleOverdueFilter}
+            onClick={() => handleOverdueFilter(!filters.overdue)}
             className={styles.overdueFilter}
           >
-            {filters.overdue ? 'Show All' : 'Overdue Only'}
+            Overdue Only
           </Button>
         </div>
       </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className={styles.errorMessage}>
-          <span>⚠ {error}</span>
-          <Button variant="ghost" size="sm" onClick={loadItems}>
-            Retry
-          </Button>
-        </div>
-      )}
 
       {/* Items Grid */}
       {items.length === 0 && !loading ? (
@@ -244,21 +225,15 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
               key={item.id}
               item={item}
               onEdit={onEditItem}
-              onUpdate={handleItemUpdate}
-              onDelete={handleItemDelete}
+              onUpdate={loadItems}
+              onDelete={loadItems}
+              perspective="lender"
             />
           ))}
-        </div>
-      )}
-
-      {/* Loading overlay for refresh */}
-      {loading && items.length > 0 && (
-        <div className={styles.refreshOverlay}>
-          <Loading size="sm" variant="spinner" />
         </div>
       )}
     </div>
   );
 };
 
-export default BorrowedItemsList;
+export default LentItemsList;

@@ -54,7 +54,7 @@ class BorrowedItemsService {
     if (item.lender_user_id === userId) return 'lender';
     return null;
   }
-  // Get all borrowed items for the current user (as borrower or lender)
+  // Get borrowed items for the current user (as borrower only)
   async getBorrowedItems(filters?: BorrowedItemsFilters, sort?: BorrowedItemsSort): Promise<{ data: BorrowedItem[] | null; error: string | null }> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -65,7 +65,7 @@ class BorrowedItemsService {
       let query = supabase
         .from('borrowed_items')
         .select('*')
-        .or(`user_id.eq.${user.id},lender_user_id.eq.${user.id}`);
+        .eq('user_id', user.id);
 
       // Apply filters
       if (filters?.status && filters.status.length > 0) {
@@ -109,6 +109,61 @@ class BorrowedItemsService {
     }
   }
 
+  // Get lent items for the current user (as lender only)
+  async getLentItems(filters?: BorrowedItemsFilters, sort?: BorrowedItemsSort): Promise<{ data: BorrowedItem[] | null; error: string | null }> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      let query = supabase
+        .from('borrowed_items')
+        .select('*')
+        .eq('lender_user_id', user.id);
+
+      // Apply filters
+      if (filters?.status && filters.status.length > 0) {
+        query = query.in('status', filters.status);
+      }
+
+      if (filters?.search) {
+        query = query.or(`name.ilike.%${filters.search}%,borrowed_from_name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      }
+
+      if (filters?.overdue) {
+        const today = new Date().toISOString().split('T')[0];
+        query = query
+          .eq('status', 'active')
+          .not('due_date', 'is', null)
+          .lt('due_date', today);
+      }
+
+      if (filters?.group_id) {
+        query = query.eq('group_id', filters.group_id);
+      }
+
+      // Apply sorting
+      if (sort?.field && sort?.direction) {
+        query = query.order(sort.field, { ascending: sort.direction === 'asc' });
+      } else {
+        query = query.order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching lent items:', error);
+        return { data: null, error: error.message };
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error in getLentItems:', error);
+      return { data: null, error: 'Failed to fetch lent items' };
+    }
+  }
+
   // Get a single borrowed item by ID
   async getBorrowedItem(id: string): Promise<{ data: BorrowedItem | null; error: string | null }> {
     try {
@@ -148,7 +203,7 @@ class BorrowedItemsService {
       // Find the lender's user ID by name from group members
       const { data: groupMembers } = await groupsService.getAllGroupMembers();
       const lender = groupMembers?.find(member => member.name === itemData.borrowed_from_name);
-      
+
       if (!lender) {
         return { data: null, error: 'Lender not found in your groups' };
       }
@@ -258,7 +313,7 @@ class BorrowedItemsService {
       }
 
       const today = new Date().toISOString().split('T')[0];
-      
+
       const { count, error } = await supabase
         .from('borrowed_items')
         .select('*', { count: 'exact', head: true })

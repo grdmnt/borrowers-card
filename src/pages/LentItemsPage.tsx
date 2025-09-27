@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { BorrowedItem } from '@/services/borrowedItems';
-import BorrowedItemsList from '@/components/BorrowedItems/BorrowedItemsList';
+import LentItemsList from '@/components/LentItems/LentItemsList';
 import BorrowedItemForm from '@/components/BorrowedItems/BorrowedItemForm';
+import { BorrowedItem } from '@/services/borrowedItems';
 import styles from '@/styles/pages/ItemsPage.module.css';
 
 const LentItemsPage: React.FC = () => {
@@ -50,21 +50,15 @@ const LentItemsPage: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className={styles.pageContainer}>
       <div className={styles.pageContent}>
 
         <div className={styles.pageBody}>
-          <BorrowedItemsList
+          <LentItemsList
             onAddItem={handleAddItem}
             onEditItem={handleEditItem}
             refreshTrigger={refreshTrigger}
-            listTitle="Your Lent Items"
-            addButtonText="Add Lent Item"
-            emptyStateTitle="No Lent Items Found"
-            emptyStateMessage="Start by adding your first lent item to keep track of things you've lent to others."
-            emptyStateButtonText="Add Your First Lent Item"
           />
         </div>
 
