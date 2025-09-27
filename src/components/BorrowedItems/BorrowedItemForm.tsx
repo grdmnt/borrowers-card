@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Textarea, Modal, ModalBody, ModalFooter } from '@/components/UI';
+import { Button, Input, Textarea, Autocomplete, Modal, ModalBody, ModalFooter } from '@/components/UI';
 import { BorrowedItem, CreateBorrowedItemData, UpdateBorrowedItemData, borrowedItemsService } from '@/services/borrowedItems';
+import { User, groupsService } from '@/services/groups';
 import styles from '@/styles/components/ItemForm.module.css';
 
 interface BorrowedItemFormProps {
@@ -29,6 +30,8 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [groupMembers, setGroupMembers] = useState<User[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
 
   // Initialize form with item data when editing
   useEffect(() => {
@@ -54,6 +57,31 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
     }
     setErrors({});
   }, [mode, item, isOpen]);
+
+  // Load group members when form opens
+  useEffect(() => {
+    if (isOpen) {
+      loadGroupMembers();
+    }
+  }, [isOpen]);
+
+  const loadGroupMembers = async () => {
+    setLoadingMembers(true);
+    try {
+      const result = await groupsService.getAllGroupMembers();
+      if (result.error) {
+        console.error('Error loading group members:', result.error);
+        setErrors(prev => ({ ...prev, members: result.error || 'Unknown error' }));
+      } else {
+        setGroupMembers(result.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading group members:', error);
+      setErrors(prev => ({ ...prev, members: 'Failed to load group members' }));
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
 
   const handleInputChange = (field: keyof CreateBorrowedItemData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -168,14 +196,21 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
 
 
             <div className={styles.formGroup}>
-              <Input
+              <Autocomplete
                 label="Borrowed From"
                 value={formData.borrowed_from_name}
-                onChange={(e) => handleInputChange('borrowed_from_name', e.target.value)}
+                onChange={(value) => handleInputChange('borrowed_from_name', value)}
+                options={groupMembers.map(member => ({
+                  id: member.id,
+                  name: member.name,
+                  email: member.email
+                }))}
                 error={errors.borrowed_from_name}
-                placeholder="Name of person or organization"
+                placeholder="Select from your group members"
                 required
                 disabled={loading}
+                loading={loadingMembers}
+                helperText="Only members from your groups can be selected"
               />
             </div>
 

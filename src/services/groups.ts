@@ -483,6 +483,57 @@ class GroupsService {
     return this.ensureUserProfile();
   }
 
+  // Get all users from groups that the current user is a member of
+  async getAllGroupMembers(): Promise<{ data: User[] | null; error: string | null }> {
+    try {
+      const { user } = await this.ensureUserProfile();
+      if (!user) {
+        return { data: null, error: 'User not authenticated' };
+      }
+
+      // Get all groups the user is a member of
+      const { data: userGroups } = await supabase
+        .from('group_members')
+        .select('group_id')
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+
+      if (!userGroups || userGroups.length === 0) {
+        return { data: [], error: null };
+      }
+
+      const groupIds = userGroups.map(g => (g as any).group_id);
+
+      // Get all members from those groups (excluding current user)
+      const { data: members, error } = await supabase
+        .from('group_members')
+        .select(`
+          user:users(id, name, email, avatar_url)
+        `)
+        .in('group_id', groupIds)
+        .eq('is_active', true)
+        .neq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching group members:', error);
+        return { data: null, error: error.message };
+      }
+
+      // Extract unique users (in case they're in multiple groups)
+      const uniqueUsers = new Map();
+      members?.forEach((member: any) => {
+        if (member.user) {
+          uniqueUsers.set(member.user.id, member.user);
+        }
+      });
+
+      return { data: Array.from(uniqueUsers.values()), error: null };
+    } catch (error) {
+      console.error('Error in getGroupMembers:', error);
+      return { data: null, error: 'Failed to fetch group members' };
+    }
+  }
+
   // Search users for group invitations
   async searchUsers(query: string): Promise<{ data: User[] | null; error: string | null }> {
     try {

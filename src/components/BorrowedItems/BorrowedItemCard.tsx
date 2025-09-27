@@ -70,22 +70,6 @@ const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
     }
   };
 
-  // Handle mark as lost
-  const handleMarkAsLost = async () => {
-    setLoading(true);
-    try {
-      const result = await borrowedItemsService.markItemAsLost(item.id);
-      if (result.error) {
-        console.error('Error marking item as lost:', result.error);
-      } else if (result.data) {
-        onUpdate(result.data);
-      }
-    } catch (error) {
-      console.error('Error marking item as lost:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle delete item
   const handleDelete = async () => {
@@ -199,25 +183,14 @@ const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
             </Button>
 
             {item.status === 'active' && (
-              <>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => setShowReturnModal(true)}
-                  disabled={loading}
-                >
-                  Mark Returned
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleMarkAsLost}
-                  loading={loading}
-                  disabled={loading}
-                >
-                  Mark Lost
-                </Button>
-              </>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setShowReturnModal(true)}
+                disabled={loading}
+              >
+                Mark Returned
+              </Button>
             )}
 
             <Button
