@@ -111,17 +111,6 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
     }));
   };
 
-  // Handle item updates
-  const handleItemUpdate = (updatedItem: BorrowedItem) => {
-    setItems(prev => prev.map(item =>
-      item.id === updatedItem.id ? updatedItem : item
-    ));
-  };
-
-  const handleItemDelete = (itemId: string) => {
-    setItems(prev => prev.filter(item => item.id !== itemId));
-  };
-
   // Get filtered item counts
   const getItemCounts = () => {
     const active = items.filter(item => item.status === 'active').length;
@@ -136,10 +125,25 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
 
   const counts = getItemCounts();
 
-  if (loading && items.length === 0) {
+  if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <Loading size="lg" variant="spinner" text="Loading borrowed items..." />
+        <Loading size="lg" />
+        <p>Loading your borrowed items...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorMessage}>
+          <h3>Error Loading Borrowed Items</h3>
+          <p>{error}</p>
+          <Button variant="ghost" size="sm" onClick={loadItems}>
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
@@ -211,16 +215,6 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className={styles.errorMessage}>
-          <span>⚠ {error}</span>
-          <Button variant="ghost" size="sm" onClick={loadItems}>
-            Retry
-          </Button>
-        </div>
-      )}
-
       {/* Items Grid */}
       {items.length === 0 && !loading ? (
         <div className={styles.emptyState}>
@@ -244,18 +238,11 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
               key={item.id}
               item={item}
               onEdit={onEditItem}
-              onUpdate={handleItemUpdate}
-              onDelete={handleItemDelete}
+              onUpdate={loadItems}
+              onDelete={loadItems}
               perspective="borrower"
             />
           ))}
-        </div>
-      )}
-
-      {/* Loading overlay for refresh */}
-      {loading && items.length > 0 && (
-        <div className={styles.refreshOverlay}>
-          <Loading size="sm" variant="spinner" />
         </div>
       )}
     </div>

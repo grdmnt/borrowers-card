@@ -48,7 +48,7 @@ const AppContent: React.FC = () => {
         <div style={{ textAlign: 'center', padding: '2rem' }}>
           <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⚠️</div>
           <div style={{ marginBottom: '1rem' }}>{error}</div>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             style={{
               backgroundColor: 'var(--color-accent)',
@@ -68,14 +68,14 @@ const AppContent: React.FC = () => {
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth';
   const isInvitePage = location.pathname.startsWith('/join-group/');
-  
+
   // For invite pages, show navigation only if user is authenticated
   const shouldShowNavigation = isInvitePage ? !!user : !isAuthPage;
 
   return (
     <div className="app">
       <Header user={user} onSignOut={signOut} showNavigation={shouldShowNavigation} />
-      
+
       <main>
         <Routes>
           {/* Public routes (redirect to dashboard if authenticated) */}
@@ -84,51 +84,39 @@ const AppContent: React.FC = () => {
               <LoginPage />
             </ProtectedRoute>
           } />
-          
+
           <Route path="/register" element={
             <ProtectedRoute requireAuth={false}>
               <RegisterPage />
             </ProtectedRoute>
           } />
-          
+
           {/* Alias for auth - both routes show the same unified form */}
           <Route path="/auth" element={
             <ProtectedRoute requireAuth={false}>
               <LoginPage />
             </ProtectedRoute>
           } />
-          
+
           {/* Protected routes (require authentication) */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard user={user} />
             </ProtectedRoute>
           } />
-          
+
           <Route path="/borrowed" element={
             <ProtectedRoute>
-              <div style={{ padding: '2rem' }}>
-                <div style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  minHeight: '60vh',
-                  textAlign: 'center',
-                  gap: '1rem'
-                }}>
-                  <BorrowedItemsPage />
-                </div>
-              </div>
+              <BorrowedItemsPage />
             </ProtectedRoute>
           } />
-          
+
           <Route path="/lent" element={
             <ProtectedRoute>
               <LentItemsPage />
             </ProtectedRoute>
           } />
-          
+
           <Route path="/groups" element={
             <ProtectedRoute>
               <GroupsPage />
@@ -137,12 +125,12 @@ const AppContent: React.FC = () => {
 
           {/* Join Group via invite link - accessible to everyone */}
           <Route path="/join-group/:groupId" element={<JoinGroupPage />} />
-          
+
           {/* Default route - redirect based on auth status */}
           <Route path="/" element={
             user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
           } />
-          
+
           {/* Catch all route */}
           <Route path="*" element={
             user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
