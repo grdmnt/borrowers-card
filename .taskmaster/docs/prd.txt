@@ -1,0 +1,214 @@
+# Borrower's Card - Product Requirements Document
+
+## Overview
+Borrower's Card is a modern, mobile-first web application that helps users track borrowed and lent items with a vintage library card aesthetic. The application solves the common problem of forgetting what items you've borrowed from friends, family, or libraries, and what you've lent to others. It's designed for anyone who regularly borrows or lends items and wants to maintain organized records with due dates, return tracking, and group management capabilities.
+
+The application targets users who value organization, have active social lending circles, and appreciate both modern functionality with nostalgic design elements. It provides value by preventing lost items, maintaining relationships through timely returns, and creating accountability in lending communities.
+
+## Core Features
+
+### 1. Item Tracking System
+- **Borrowed Items Management**: Users can add, edit, and track items they've borrowed from others
+- **Lent Items Management**: Users can add, edit, and track items they've lent to others
+- **Categories**: Organize items by type (books, movies, games, tools, electronics, etc.)
+- **Due Dates**: Set and track return dates with overdue notifications
+- **Status Tracking**: Active, returned, overdue, and lost status management
+- **Notes & Images**: Add descriptions, notes, and photos for better item identification
+
+### 2. User Authentication & Profiles
+- **Secure Authentication**: Email/password login with Supabase Auth
+- **User Profiles**: Manage personal information and preferences
+- **Session Management**: Persistent login across devices
+- **Password Recovery**: Secure password reset functionality
+
+### 3. Group Management
+- **Lending Circles**: Create and join groups for shared item tracking
+- **Group Permissions**: Admin and member roles with appropriate access levels
+- **Group Activity**: View lending activity within groups
+- **Member Management**: Invite, remove, and manage group members
+
+### 4. Dashboard & Analytics
+- **Overview Dashboard**: Quick stats on borrowed/lent items, overdue items
+- **Activity Feed**: Recent borrowing and lending activity
+- **Search & Filters**: Find items by category, status, person, or date
+- **Reports**: Generate summaries of lending patterns and history
+
+## User Experience
+
+### User Personas
+1. **The Organized Borrower**: Frequently borrows books/media, wants to track return dates
+2. **The Generous Lender**: Often lends tools/items to friends, needs to remember what's out
+3. **The Group Coordinator**: Manages lending within family/friend groups or organizations
+4. **The Forgetful Friend**: Needs reminders and organization to maintain good lending relationships
+
+### Key User Flows
+1. **New User Onboarding**: Sign up → Dashboard tour → Add first item
+2. **Adding Borrowed Item**: Dashboard → Add Item → Fill details → Save → View in list
+3. **Returning Item**: Find item → Mark as returned → Optional rating/notes
+4. **Group Creation**: Groups → Create Group → Invite members → Start tracking
+5. **Mobile Quick Add**: Mobile-optimized quick entry for on-the-go tracking
+
+### UI/UX Considerations
+- **Library Card Aesthetic**: Vintage library card design with modern usability
+- **Mobile-First**: Optimized for mobile devices with touch-friendly interfaces
+- **Accessibility**: WCAG compliant with keyboard navigation and screen reader support
+- **Progressive Web App**: Offline capability and app-like experience
+- **Responsive Design**: Seamless experience across all device sizes
+
+## Technical Architecture
+
+### System Components
+- **Frontend**: React 18 with TypeScript, Vite build tool
+- **Backend**: Supabase (PostgreSQL database, Auth, Real-time subscriptions)
+- **Styling**: CSS Modules with custom properties for theming
+- **State Management**: React hooks and context for local state
+- **Routing**: React Router for client-side navigation
+- **Real-time**: Supabase real-time subscriptions for live updates
+
+### Data Models
+- **Users**: Profile information, preferences, authentication data
+- **Items**: Borrowed/lent items with metadata, categories, status
+- **Groups**: Lending circles with member management
+- **Activities**: Audit trail of borrowing/lending actions
+- **Notifications**: Reminders and alerts for due dates
+
+### APIs and Integrations
+- **Supabase Auth**: User authentication and session management
+- **Supabase Database**: PostgreSQL with Row Level Security
+- **Supabase Storage**: Image uploads for item photos
+- **Supabase Real-time**: Live updates across devices
+- **Progressive Web App**: Service worker for offline functionality
+
+### Infrastructure Requirements
+- **Hosting**: Static site hosting (Netlify/Vercel)
+- **Database**: Supabase managed PostgreSQL
+- **CDN**: Global content delivery for fast loading
+- **SSL**: HTTPS encryption for security
+- **Monitoring**: Error tracking and performance monitoring
+
+## Development Roadmap
+
+### Phase 1: MVP Foundation (Current Status: Complete)
+- ✅ Project setup with React, TypeScript, Vite
+- ✅ Supabase integration and configuration
+- ✅ Basic routing and navigation structure
+- ✅ Library card-themed UI foundation
+- ✅ Responsive CSS framework
+- ✅ Header component with navigation
+- ✅ Dashboard page with placeholder sections
+
+### Phase 2: Core Authentication
+- User registration and login forms
+- Authentication state management
+- Protected routes implementation
+- User profile management
+- Password recovery functionality
+- Session persistence and security
+
+### Phase 3: Item Management System
+- Database schema creation in Supabase
+- Add borrowed item functionality
+- Add lent item functionality
+- Item listing and display components
+- Edit and delete item capabilities
+- Category management system
+- Status tracking and updates
+
+### Phase 4: Enhanced UX & Features
+- Search and filtering system
+- Due date notifications
+- Image upload for items
+- Bulk operations (mark multiple as returned)
+- Data export capabilities
+- Advanced sorting and pagination
+
+### Phase 5: Group Management
+- Group creation and management
+- Member invitation system
+- Group-specific item tracking
+- Permission-based access control
+- Group activity feeds
+- Shared lending statistics
+
+### Phase 6: Advanced Features
+- Progressive Web App implementation
+- Offline functionality with sync
+- Push notifications for due dates
+- Analytics and reporting dashboard
+- Data backup and restore
+- API for third-party integrations
+
+### Phase 7: Polish & Optimization
+- Performance optimization
+- Accessibility improvements
+- Advanced theming options
+- User onboarding flow
+- Help documentation
+- Beta testing and feedback integration
+
+## Logical Dependency Chain
+
+### Foundation First (Phases 1-2)
+1. **Project Infrastructure**: Build tools, dependencies, basic structure
+2. **Authentication System**: Must be implemented before any user-specific features
+3. **Database Schema**: Core tables and relationships before CRUD operations
+4. **Basic Navigation**: Essential for user flow between features
+
+### Core Functionality (Phase 3)
+1. **Item CRUD Operations**: Foundation for all item management features
+2. **Category System**: Enables better organization and filtering
+3. **Status Management**: Critical for tracking item lifecycle
+4. **Basic UI Components**: Reusable components for consistent experience
+
+### Enhanced Experience (Phases 4-5)
+1. **Search & Filters**: Builds on existing item lists
+2. **Group Management**: Extends individual tracking to collaborative use
+3. **Notifications**: Enhances user engagement and prevents overdue items
+4. **Image Support**: Improves item identification and user experience
+
+### Advanced Features (Phases 6-7)
+1. **PWA Implementation**: Requires stable core functionality
+2. **Analytics**: Needs sufficient data from core features
+3. **Performance Optimization**: Applied after core features are stable
+4. **Polish & Testing**: Final phase before production release
+
+## Risks and Mitigations
+
+### Technical Challenges
+- **Risk**: Supabase real-time complexity
+- **Mitigation**: Start with simple polling, upgrade to real-time incrementally
+
+- **Risk**: Mobile performance on older devices
+- **Mitigation**: Progressive enhancement, performance budgets, testing on various devices
+
+- **Risk**: Data synchronization conflicts
+- **Mitigation**: Implement optimistic updates with conflict resolution strategies
+
+### MVP Scope Management
+- **Risk**: Feature creep delaying MVP
+- **Mitigation**: Strict adherence to Phase 1-3 scope, defer nice-to-have features
+
+- **Risk**: Over-engineering early features
+- **Mitigation**: Build minimal viable versions first, iterate based on user feedback
+
+### Resource Constraints
+- **Risk**: Limited development time
+- **Mitigation**: Prioritize core user flows, use existing UI libraries where appropriate
+
+- **Risk**: Supabase service limitations
+- **Mitigation**: Monitor usage limits, plan for scaling or migration if needed
+
+## Appendix
+
+### Research Findings
+- Users prefer mobile-first design for quick item entry
+- Library card aesthetic resonates with target demographic
+- Group features are highly requested but not essential for MVP
+- Offline functionality is important for mobile users
+
+### Technical Specifications
+- **Minimum Browser Support**: Modern browsers with ES2020 support
+- **Mobile Compatibility**: iOS Safari 14+, Chrome Mobile 90+
+- **Performance Targets**: <3s initial load, <1s navigation
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Security**: HTTPS only, secure authentication, data encryption

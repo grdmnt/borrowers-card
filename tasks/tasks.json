@@ -1,0 +1,252 @@
+{
+  "version": "1.0.0",
+  "tags": {
+    "master": {
+      "name": "master",
+      "description": "Main development branch for Borrower's Card project",
+      "created_at": "2025-09-27T15:30:41+10:00",
+      "tasks": []
+    }
+  },
+  "current_tag": "master",
+  "development": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement User Authentication System",
+        "description": "Create login and registration forms with Supabase Auth integration",
+        "details": "- Create login form component with email/password fields\n- Create registration form component with validation\n- Implement Supabase Auth integration for sign up/sign in\n- Add form validation and error handling\n- Style forms to match library card theme\n- Add loading states and user feedback\n- Implement password recovery functionality\n- Add protected route logic",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Set up Supabase Database Schema",
+        "description": "Create database tables and relationships for the Borrower's Card application",
+        "details": "- Create users table with profile information\n- Create borrowed_items table with all necessary fields\n- Create lent_items table with all necessary fields\n- Create groups table for lending circles\n- Create group_members table for membership management\n- Set up Row Level Security (RLS) policies\n- Create database indexes for performance\n- Add foreign key constraints and relationships\n- Test database operations and queries",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Create Authentication Context and Hooks",
+        "description": "Implement React context for authentication state management",
+        "details": "- Create AuthContext for global auth state\n- Implement useAuth hook for accessing auth state\n- Add authentication state persistence\n- Handle auth state changes and updates\n- Implement logout functionality\n- Add loading states for auth operations\n- Create protected route wrapper component\n- Add error handling for auth failures",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Build Borrowed Items Management System",
+        "description": "Create CRUD operations for borrowed items with full UI components",
+        "details": "- Create AddBorrowedItem form component\n- Implement borrowed items list/grid view\n- Add edit borrowed item functionality\n- Create delete borrowed item with confirmation\n- Implement item status updates (active, returned, overdue)\n- Add category selection and filtering\n- Create due date management and notifications\n- Style components with library card theme\n- Add image upload capability for items\n- Implement search and sorting functionality",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "2",
+          "6"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Build Lent Items Management System",
+        "description": "Create CRUD operations for lent items with full UI components",
+        "details": "- Create AddLentItem form component\n- Implement lent items list/grid view\n- Add edit lent item functionality\n- Create delete lent item with confirmation\n- Implement item status updates (active, returned, overdue)\n- Add category selection and filtering\n- Create due date management and reminders\n- Style components with library card theme\n- Add image upload capability for items\n- Implement search and sorting functionality",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "2",
+          "6"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Create Reusable UI Components Library",
+        "description": "Build a set of reusable UI components with library card theming",
+        "details": "- Create Button component with variants and states\n- Build Card component for item display\n- Implement Form components (Input, Select, Textarea)\n- Create Modal/Dialog component for confirmations\n- Build Loading spinner and skeleton components\n- Create Badge component for status indicators\n- Implement Notification/Toast component\n- Add DatePicker component for due dates\n- Create SearchBar component with filtering\n- Style all components with library card aesthetic",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Enhance Dashboard with Real Data Integration",
+        "description": "Connect dashboard to real data and add interactive functionality",
+        "details": "- Replace placeholder content with real data from Supabase\n- Implement real-time statistics (borrowed/lent/overdue counts)\n- Add recent activity feed with actual user actions\n- Create quick action buttons that navigate to forms\n- Implement dashboard widgets for key metrics\n- Add data loading states and error handling\n- Create responsive dashboard layout for all screen sizes\n- Add user greeting with personalized content\n- Implement dashboard refresh functionality",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "4",
+          "5"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement User Profile Management",
+        "description": "Create user profile page with settings and preferences",
+        "details": "- Create user profile page component\n- Implement profile editing functionality\n- Add avatar upload and management\n- Create password change functionality\n- Add user preferences and settings\n- Implement account deletion option\n- Create profile validation and error handling\n- Add profile picture cropping and resizing\n- Style profile page with library card theme\n- Add profile completion indicators",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Build Group Management System",
+        "description": "Create functionality for managing lending groups and circles",
+        "details": "- Create group creation form and functionality\n- Implement group listing and management page\n- Add member invitation system via email\n- Create group member management (add/remove members)\n- Implement group-specific item tracking\n- Add group activity feed and notifications\n- Create group settings and permissions\n- Implement group admin and member roles\n- Add group statistics and analytics\n- Style group components with library theme",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Search and Filtering System",
+        "description": "Add comprehensive search and filtering capabilities across all items",
+        "details": "- Create global search functionality\n- Implement category-based filtering\n- Add status-based filtering (active, returned, overdue)\n- Create date range filtering for borrowed/lent dates\n- Add person/contact-based filtering\n- Implement advanced search with multiple criteria\n- Create saved search functionality\n- Add search result highlighting\n- Implement search history and suggestions\n- Optimize search performance with indexing",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Add Due Date Notifications and Reminders",
+        "description": "Implement notification system for due dates and overdue items",
+        "details": "- Create notification system architecture\n- Implement due date reminder notifications\n- Add overdue item alerts and warnings\n- Create email notification integration\n- Implement in-app notification center\n- Add notification preferences and settings\n- Create notification scheduling system\n- Implement push notifications for PWA\n- Add notification history and management\n- Style notifications with library card theme",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Implement Image Upload and Management",
+        "description": "Add image upload functionality for items and user avatars",
+        "details": "- Set up Supabase Storage for images\n- Create image upload component with drag-and-drop\n- Implement image compression and resizing\n- Add image cropping functionality\n- Create image gallery for items\n- Implement image deletion and management\n- Add image validation and error handling\n- Create image optimization for different screen sizes\n- Implement lazy loading for images\n- Add image alt text and accessibility features",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Add Data Export and Backup Features",
+        "description": "Implement data export functionality and backup options",
+        "details": "- Create CSV export for borrowed items\n- Create CSV export for lent items\n- Implement JSON backup export functionality\n- Add PDF report generation for summaries\n- Create data import functionality from CSV\n- Implement selective data export options\n- Add export scheduling and automation\n- Create data validation for imports\n- Implement export history and management\n- Add export progress indicators and notifications",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Implement Progressive Web App (PWA) Features",
+        "description": "Convert application to PWA with offline capabilities",
+        "details": "- Create service worker for caching\n- Implement offline functionality and data sync\n- Add PWA manifest file and icons\n- Create install prompt and app-like experience\n- Implement background sync for offline actions\n- Add push notification support\n- Create offline indicator and messaging\n- Implement cache management strategies\n- Add PWA testing and validation\n- Optimize for app store deployment",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Comprehensive Testing Suite",
+        "description": "Add unit tests, integration tests, and end-to-end testing",
+        "details": "- Set up Jest and React Testing Library\n- Create unit tests for all components\n- Implement integration tests for user flows\n- Add end-to-end tests with Playwright or Cypress\n- Create test utilities and mock data\n- Implement API testing for Supabase operations\n- Add accessibility testing with axe-core\n- Create visual regression testing\n- Set up test coverage reporting\n- Add continuous integration testing pipeline",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Performance Optimization and Monitoring",
+        "description": "Optimize application performance and implement monitoring",
+        "details": "- Implement code splitting and lazy loading\n- Optimize bundle size with webpack analysis\n- Add performance monitoring with Web Vitals\n- Implement image optimization and lazy loading\n- Create database query optimization\n- Add caching strategies for API calls\n- Implement virtual scrolling for large lists\n- Add performance budgets and alerts\n- Create lighthouse CI integration\n- Optimize CSS and reduce unused styles",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Accessibility and Internationalization",
+        "description": "Ensure application is accessible and supports multiple languages",
+        "details": "- Implement WCAG 2.1 AA compliance\n- Add keyboard navigation support\n- Create screen reader compatibility\n- Implement focus management and indicators\n- Add high contrast mode support\n- Create internationalization (i18n) framework\n- Add support for multiple languages\n- Implement RTL language support\n- Create accessible form validation\n- Add semantic HTML and ARIA labels",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Error Handling and Logging System",
+        "description": "Implement comprehensive error handling and logging",
+        "details": "- Create global error boundary components\n- Implement API error handling and retry logic\n- Add user-friendly error messages and recovery\n- Create error logging and reporting system\n- Implement offline error handling\n- Add form validation error handling\n- Create network error detection and handling\n- Implement error analytics and monitoring\n- Add error recovery suggestions for users\n- Create error state UI components",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Security Implementation and Hardening",
+        "description": "Implement security best practices and hardening measures",
+        "details": "- Implement input validation and sanitization\n- Add CSRF protection and security headers\n- Create secure file upload validation\n- Implement rate limiting for API calls\n- Add content security policy (CSP)\n- Create secure authentication flows\n- Implement data encryption for sensitive fields\n- Add security audit and vulnerability scanning\n- Create secure session management\n- Implement privacy controls and GDPR compliance",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Deployment and DevOps Setup",
+        "description": "Set up production deployment and DevOps pipeline",
+        "details": "- Configure production build optimization\n- Set up deployment to Netlify or Vercel\n- Create CI/CD pipeline with GitHub Actions\n- Implement environment-specific configurations\n- Set up domain and SSL certificates\n- Create deployment monitoring and alerts\n- Implement automated testing in pipeline\n- Set up staging and production environments\n- Create deployment rollback procedures\n- Add performance monitoring in production",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-27T05:32:10.315Z",
+      "updated": "2025-09-27T05:35:49.027Z",
+      "description": "Main development tasks for Borrower's Card project"
+    }
+  }
+}
