@@ -28,7 +28,7 @@
         "description": "Create database tables and relationships for the Borrower's Card application",
         "details": "- Create users table with profile information\n- Create borrowed_items table with all necessary fields\n- Create lent_items table with all necessary fields\n- Create groups table for lending circles\n- Create group_members table for membership management\n- Set up Row Level Security (RLS) policies\n- Create database indexes for performance\n- Add foreign key constraints and relationships\n- Test database operations and queries",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -245,7 +245,7 @@
     ],
     "metadata": {
       "created": "2025-09-27T05:32:10.315Z",
-      "updated": "2025-09-27T06:03:46.535Z",
+      "updated": "2025-09-27T07:44:25.272Z",
       "description": "Main development tasks for Borrower's Card project"
     }
   }
