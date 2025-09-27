@@ -13,6 +13,7 @@ interface BorrowedItemsListProps {
   emptyStateTitle?: string;
   emptyStateMessage?: string;
   emptyStateButtonText?: string;
+  searchPlaceholder?: string;
 }
 
 const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
@@ -23,7 +24,8 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
   addButtonText = 'Add Borrowed Item',
   emptyStateTitle = 'No Borrowed Items Found',
   emptyStateMessage = 'Try adjusting your filters or search terms.',
-  emptyStateButtonText = 'Add Your First Borrowed Item'
+  emptyStateButtonText = 'Add Your First Borrowed Item',
+  searchPlaceholder = 'Search items, descriptions, or lenders...'
 }) => {
   const [items, setItems] = useState<BorrowedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,30 +176,28 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
 
       {/* Filters and Search */}
       <div className={styles.filtersSection}>
-        <div className={styles.searchRow}>
+        <div className={styles.filtersRow}>
           <Input
-            placeholder="Search items, descriptions, or lenders..."
+            placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             leftIcon="🔍"
             className={styles.searchInput}
           />
-        </div>
 
-        <div className={styles.filtersRow}>
           <Select
             options={statusOptions}
             value={filters.status?.[0] || ''}
             onChange={(e) => handleStatusFilter(e.target.value)}
+            placeholder="Filter by status"
             className={styles.filterSelect}
           />
-
 
           <Select
             options={sortOptions}
             value={`${sort.field}:${sort.direction}`}
             onChange={(e) => handleSortChange(e.target.value)}
-            className={styles.filterSelect}
+            className={styles.sortSelect}
           />
 
           <Button
@@ -246,6 +246,7 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
               onEdit={onEditItem}
               onUpdate={handleItemUpdate}
               onDelete={handleItemDelete}
+              perspective="borrower"
             />
           ))}
         </div>

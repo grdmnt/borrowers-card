@@ -94,8 +94,11 @@ const LentItemsList: React.FC<LentItemsListProps> = ({
     setSort({ field, direction });
   };
 
-  const handleOverdueFilter = (checked: boolean) => {
-    setFilters(prev => ({ ...prev, overdue: checked || undefined }));
+  const handleOverdueFilter = () => {
+    setFilters(prev => ({
+      ...prev,
+      overdue: !prev.overdue
+    }));
   };
 
   // Calculate counts
@@ -165,7 +168,7 @@ const LentItemsList: React.FC<LentItemsListProps> = ({
 
       {/* Filters and Search */}
       <div className={styles.filtersSection}>
-        <div className={styles.searchRow}>
+        <div className={styles.filtersRow}>
           <Input
             placeholder={searchPlaceholder}
             value={searchTerm}
@@ -173,13 +176,11 @@ const LentItemsList: React.FC<LentItemsListProps> = ({
             leftIcon="🔍"
             className={styles.searchInput}
           />
-        </div>
 
-        <div className={styles.filtersRow}>
           <Select
             options={statusOptions}
             value={filters.status?.[0] || ''}
-            onChange={handleStatusFilter}
+            onChange={(e) => handleStatusFilter(e.target.value)}
             placeholder="Filter by status"
             className={styles.filterSelect}
           />
@@ -187,17 +188,17 @@ const LentItemsList: React.FC<LentItemsListProps> = ({
           <Select
             options={sortOptions}
             value={`${sort.field}:${sort.direction}`}
-            onChange={handleSortChange}
+            onChange={(e) => handleSortChange(e.target.value)}
             className={styles.sortSelect}
           />
 
           <Button
-            variant={filters.overdue ? 'primary' : 'ghost'}
+            variant={filters.overdue ? 'danger' : 'outline'}
             size="sm"
-            onClick={() => handleOverdueFilter(!filters.overdue)}
+            onClick={handleOverdueFilter}
             className={styles.overdueFilter}
           >
-            Overdue Only
+            {filters.overdue ? 'Show All' : 'Overdue Only'}
           </Button>
         </div>
       </div>

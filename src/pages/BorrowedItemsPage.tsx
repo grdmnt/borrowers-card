@@ -35,10 +35,14 @@ const BorrowedItemsPage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className={styles.authRequired}>
-        <div className={styles.authMessage}>
-          <h2>Authentication Required</h2>
-          <p>Please sign in to manage your borrowed items.</p>
+      <div className={styles.pageContainer}>
+        <div className={styles.pageContent}>
+          <div className={styles.authRequired}>
+            <div className={styles.authMessage}>
+              <h2>Authentication Required</h2>
+              <p>Please sign in to manage your borrowed items.</p>
+            </div>
+          </div>
         </div>
       </div>
     );

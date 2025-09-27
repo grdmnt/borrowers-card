@@ -18,6 +18,8 @@ export interface BorrowedItem {
   image_url?: string;
   created_at: string;
   updated_at: string;
+  // Additional fields for perspective handling
+  borrower_name?: string;   // Name of the person who borrowed (for lender perspective)
 }
 
 export interface CreateBorrowedItemData {
@@ -119,7 +121,10 @@ class BorrowedItemsService {
 
       let query = supabase
         .from('borrowed_items')
-        .select('*')
+        .select(`
+          *,
+          borrower:user_id(name, email)
+        `)
         .eq('lender_user_id', user.id);
 
       // Apply filters
@@ -157,7 +162,19 @@ class BorrowedItemsService {
         return { data: null, error: error.message };
       }
 
-      return { data, error: null };
+      // Process the data to add borrower name from joined user data
+      const processedData = data?.map((item: any) => {
+        const borrowerName = item.borrower?.name || 
+                           item.borrower?.email?.split('@')[0] || 
+                           'Unknown User';
+        
+        return {
+          ...item,
+          borrower_name: borrowerName
+        };
+      });
+
+      return { data: processedData, error: null };
     } catch (error) {
       console.error('Error in getLentItems:', error);
       return { data: null, error: 'Failed to fetch lent items' };

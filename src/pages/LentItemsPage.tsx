@@ -50,19 +50,16 @@ const LentItemsPage: React.FC = () => {
       </div>
     );
   }
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.pageContent}>
+        <LentItemsList
+          onAddItem={handleAddItem}
+          onEditItem={handleEditItem}
+          refreshTrigger={refreshTrigger}
+        />
 
-        <div className={styles.pageBody}>
-          <LentItemsList
-            onAddItem={handleAddItem}
-            onEditItem={handleEditItem}
-            refreshTrigger={refreshTrigger}
-          />
-        </div>
-
-        {/* Item Form Modal */}
         <BorrowedItemForm
           isOpen={showForm}
           onClose={handleFormClose}
@@ -75,5 +72,4 @@ const LentItemsPage: React.FC = () => {
     </div>
   );
 };
-
 export default LentItemsPage;

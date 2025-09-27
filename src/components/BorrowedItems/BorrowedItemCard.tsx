@@ -117,8 +117,12 @@ const BorrowedItemCard: React.FC<BorrowedItemCardProps> = ({
         <CardContent>
           <div className={styles.itemDetails}>
             <div className={styles.detailRow}>
-              <span className={styles.label}>Borrowed from:</span>
-              <span className={styles.value}>{item.borrowed_from_name}</span>
+              <span className={styles.label}>
+                {perspective === 'lender' ? 'Borrowed by:' : 'Borrowed from:'}
+              </span>
+              <span className={styles.value}>
+                {perspective === 'lender' ? (item.borrower_name || 'Unknown User') : item.borrowed_from_name}
+              </span>
             </div>
 
             <div className={styles.detailRow}>
