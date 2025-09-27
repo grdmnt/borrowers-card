@@ -5,6 +5,7 @@ import Header from '@/components/Layout/Header';
 import Dashboard from '@/pages/Dashboard';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
+import BorrowedItemsPage from '@/pages/BorrowedItemsPage';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
 const AppContent: React.FC = () => {
@@ -99,20 +100,7 @@ const AppContent: React.FC = () => {
           
           <Route path="/borrowed" element={
             <ProtectedRoute>
-              <div style={{ 
-                padding: '2rem', 
-                textAlign: 'center',
-                backgroundColor: 'var(--color-background)',
-                minHeight: 'calc(100vh - 80px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div>
-                  <h2>Borrowed Items</h2>
-                  <p>This page will show your borrowed items.</p>
-                </div>
-              </div>
+              <BorrowedItemsPage />
             </ProtectedRoute>
           } />
           

@@ -52,7 +52,7 @@
         "description": "Create CRUD operations for borrowed items with full UI components",
         "details": "- Create AddBorrowedItem form component\n- Implement borrowed items list/grid view\n- Add edit borrowed item functionality\n- Create delete borrowed item with confirmation\n- Implement item status updates (active, returned, overdue)\n- Add category selection and filtering\n- Create due date management and notifications\n- Style components with library card theme\n- Add image upload capability for items\n- Implement search and sorting functionality",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "2",
           "6"
@@ -245,7 +245,7 @@
     ],
     "metadata": {
       "created": "2025-09-27T05:32:10.315Z",
-      "updated": "2025-09-27T08:04:43.044Z",
+      "updated": "2025-09-27T08:23:27.202Z",
       "description": "Main development tasks for Borrower's Card project"
     }
   }

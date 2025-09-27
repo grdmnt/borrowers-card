@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClipLoader, PulseLoader, BeatLoader } from 'react-spinners';
 import styles from '@/styles/components/Loading.module.css';
 
 export interface LoadingProps {
@@ -22,24 +23,45 @@ const Loading: React.FC<LoadingProps> = ({
     className
   ].filter(Boolean).join(' ');
 
-  const loadingClasses = [
-    styles.loading,
-    styles[variant],
-    styles[size]
-  ].filter(Boolean).join(' ');
+  // Size mapping for react-spinners
+  const getSpinnerSize = () => {
+    switch (size) {
+      case 'sm': return 20;
+      case 'md': return 32;
+      case 'lg': return 48;
+      default: return 32;
+    }
+  };
+
+  const spinnerSize = getSpinnerSize();
+  const color = '#6D4C41'; // Library card brown color
 
   return (
     <div className={containerClasses} role="status" aria-live="polite">
-      <div className={loadingClasses}>
-        {variant === 'spinner' && <div className={styles.spinner} />}
-        {variant === 'dots' && (
-          <div className={styles.dots}>
-            <div className={styles.dot} />
-            <div className={styles.dot} />
-            <div className={styles.dot} />
-          </div>
+      <div className={styles.loading}>
+        {variant === 'spinner' && (
+          <ClipLoader
+            color={color}
+            size={spinnerSize}
+            cssOverride={{
+              borderWidth: '2px',
+            }}
+          />
         )}
-        {variant === 'pulse' && <div className={styles.pulse} />}
+        {variant === 'dots' && (
+          <BeatLoader
+            color={color}
+            size={Math.max(6, spinnerSize / 4)}
+            margin={2}
+          />
+        )}
+        {variant === 'pulse' && (
+          <PulseLoader
+            color={color}
+            size={Math.max(8, spinnerSize / 3)}
+            margin={3}
+          />
+        )}
       </div>
       
       {text && (
