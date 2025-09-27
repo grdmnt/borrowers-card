@@ -8,12 +8,22 @@ interface BorrowedItemsListProps {
   onAddItem: () => void;
   onEditItem: (item: BorrowedItem) => void;
   refreshTrigger?: number; // Used to trigger refresh from parent
+  listTitle?: string;
+  addButtonText?: string;
+  emptyStateTitle?: string;
+  emptyStateMessage?: string;
+  emptyStateButtonText?: string;
 }
 
 const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
   onAddItem,
   onEditItem,
-  refreshTrigger
+  refreshTrigger,
+  listTitle = 'Your Borrowed Items',
+  addButtonText = 'Add Borrowed Item',
+  emptyStateTitle = 'No Borrowed Items Found',
+  emptyStateMessage = 'Try adjusting your filters or search terms.',
+  emptyStateButtonText = 'Add Your First Borrowed Item'
 }) => {
   const [items, setItems] = useState<BorrowedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,7 +148,7 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
       <div className={styles.listHeader}>
         <div className={styles.headerContent}>
           <div className={styles.titleSection}>
-            <h2 className={styles.listTitle}>Borrowed Items</h2>
+            <h2 className={styles.listTitle}>{listTitle}</h2>
             <div className={styles.statsSection}>
               <Badge variant="info" size="sm">{counts.total} total</Badge>
               <Badge variant="success" size="sm">{counts.active} active</Badge>
@@ -157,7 +167,7 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
             icon="+"
             className={styles.addButton}
           >
-            Add Item
+            {addButtonText}
           </Button>
         </div>
       </div>
@@ -215,15 +225,15 @@ const BorrowedItemsList: React.FC<BorrowedItemsListProps> = ({
       {items.length === 0 && !loading ? (
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>📚</div>
-          <h3 className={styles.emptyTitle}>No borrowed items found</h3>
+          <h3 className={styles.emptyTitle}>{emptyStateTitle}</h3>
           <p className={styles.emptyDescription}>
             {Object.keys(filters).length > 0 || searchTerm
-              ? 'Try adjusting your filters or search terms.'
-              : 'Start by adding your first borrowed item.'}
+              ? emptyStateMessage
+              : emptyStateMessage}
           </p>
           {Object.keys(filters).length === 0 && !searchTerm && (
             <Button variant="primary" onClick={onAddItem} className={styles.emptyAction}>
-              Add Your First Item
+              {emptyStateButtonText}
             </Button>
           )}
         </div>

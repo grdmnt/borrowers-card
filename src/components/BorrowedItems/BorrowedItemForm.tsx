@@ -10,6 +10,7 @@ interface BorrowedItemFormProps {
   onSuccess: (item: BorrowedItem) => void;
   item?: BorrowedItem | null;
   mode: 'create' | 'edit';
+  formTitle?: string;
 }
 
 const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
@@ -17,7 +18,8 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
   onClose,
   onSuccess,
   item,
-  mode
+  mode,
+  formTitle
 }) => {
   const [formData, setFormData] = useState<CreateBorrowedItemData>({
     name: '',
@@ -169,7 +171,7 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={mode === 'create' ? 'Add Borrowed Item' : 'Edit Borrowed Item'}
+      title={formTitle || (mode === 'create' ? 'Add Borrowed Item' : 'Edit Borrowed Item')}
       size="lg"
       closeOnOverlayClick={!loading}
     >

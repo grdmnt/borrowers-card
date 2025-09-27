@@ -1,15 +1,16 @@
 import { supabase } from '@/lib/supabase';
 import { groupsService } from './groups';
 
-// Types for borrowed items
+// Types for borrowed items (shared by both borrower and lender)
 export interface BorrowedItem {
   id: string;
-  user_id: string;
+  user_id: string;          // The person who borrowed the item
+  lender_user_id: string;   // The person who lent the item
   group_id?: string;
   name: string;
   description?: string;
-  status: 'active' | 'returned' | 'overdue' | 'lost';
-  borrowed_from_name: string;
+  status: 'active' | 'returned' | 'overdue';
+  borrowed_from_name: string;  // Display name of lender
   borrowed_date: string;
   due_date?: string;
   returned_date?: string;
@@ -42,16 +43,19 @@ export interface BorrowedItemsFilters {
 }
 
 export interface BorrowedItemsSort {
-  field: 'name' | 'borrowed_date' | 'due_date' | 'status';
+  field: keyof BorrowedItem;
   direction: 'asc' | 'desc';
 }
 
 class BorrowedItemsService {
-  // Get all borrowed items for the current user
-  async getBorrowedItems(
-    filters?: BorrowedItemsFilters,
-    sort?: BorrowedItemsSort
-  ): Promise<{ data: BorrowedItem[] | null; error: string | null }> {
+  // Helper method to determine user's perspective on an item
+  getUserPerspective(item: BorrowedItem, userId: string): 'borrower' | 'lender' | null {
+    if (item.user_id === userId) return 'borrower';
+    if (item.lender_user_id === userId) return 'lender';
+    return null;
+  }
+  // Get all borrowed items for the current user (as borrower or lender)
+  async getBorrowedItems(filters?: BorrowedItemsFilters, sort?: BorrowedItemsSort): Promise<{ data: BorrowedItem[] | null; error: string | null }> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -61,33 +65,34 @@ class BorrowedItemsService {
       let query = supabase
         .from('borrowed_items')
         .select('*')
-        .eq('user_id', user.id);
+        .or(`user_id.eq.${user.id},lender_user_id.eq.${user.id}`);
 
       // Apply filters
-      if (filters) {
-        if (filters.status && filters.status.length > 0) {
-          query = query.in('status', filters.status);
-        }
-        
-        if (filters.search) {
-          query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%,borrowed_from_name.ilike.%${filters.search}%`);
-        }
-        
-        if (filters.overdue) {
-          query = query.lt('due_date', new Date().toISOString().split('T')[0]);
-        }
-        
-        if (filters.group_id) {
-          query = query.eq('group_id', filters.group_id);
-        }
+      if (filters?.status && filters.status.length > 0) {
+        query = query.in('status', filters.status);
+      }
+
+      if (filters?.search) {
+        query = query.or(`name.ilike.%${filters.search}%,borrowed_from_name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      }
+
+      if (filters?.overdue) {
+        const today = new Date().toISOString().split('T')[0];
+        query = query
+          .eq('status', 'active')
+          .not('due_date', 'is', null)
+          .lt('due_date', today);
+      }
+
+      if (filters?.group_id) {
+        query = query.eq('group_id', filters.group_id);
       }
 
       // Apply sorting
-      if (sort) {
+      if (sort?.field && sort?.direction) {
         query = query.order(sort.field, { ascending: sort.direction === 'asc' });
       } else {
-        // Default sort by borrowed_date descending
-        query = query.order('borrowed_date', { ascending: false });
+        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error } = await query;
@@ -140,12 +145,22 @@ class BorrowedItemsService {
         return { data: null, error: profileError || 'User not authenticated' };
       }
 
-      const { data, error } = await supabase
+      // Find the lender's user ID by name from group members
+      const { data: groupMembers } = await groupsService.getAllGroupMembers();
+      const lender = groupMembers?.find(member => member.name === itemData.borrowed_from_name);
+      
+      if (!lender) {
+        return { data: null, error: 'Lender not found in your groups' };
+      }
+
+      // Create the borrowed item
+      const { data: borrowedItem, error } = await supabase
         .from('borrowed_items')
         .insert([
           {
             ...itemData,
             user_id: user.id,
+            lender_user_id: lender.id,
             status: 'active' as const,
           }
         ])
@@ -157,7 +172,8 @@ class BorrowedItemsService {
         return { data: null, error: error.message };
       }
 
-      return { data, error: null };
+
+      return { data: borrowedItem, error: null };
     } catch (error) {
       console.error('Error in createBorrowedItem:', error);
       return { data: null, error: 'Failed to create borrowed item' };

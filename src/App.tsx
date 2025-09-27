@@ -6,6 +6,7 @@ import Dashboard from '@/pages/Dashboard';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import BorrowedItemsPage from '@/pages/BorrowedItemsPage';
+import LentItemsPage from '@/pages/LentItemsPage';
 import GroupsPage from '@/pages/GroupsPage';
 import JoinGroupPage from '@/pages/JoinGroupPage';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
@@ -106,26 +107,25 @@ const AppContent: React.FC = () => {
           
           <Route path="/borrowed" element={
             <ProtectedRoute>
-              <BorrowedItemsPage />
+              <div style={{ padding: '2rem' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  minHeight: '60vh',
+                  textAlign: 'center',
+                  gap: '1rem'
+                }}>
+                  <BorrowedItemsPage />
+                </div>
+              </div>
             </ProtectedRoute>
           } />
           
           <Route path="/lent" element={
             <ProtectedRoute>
-              <div style={{ 
-                padding: '2rem', 
-                textAlign: 'center',
-                backgroundColor: 'var(--color-background)',
-                minHeight: 'calc(100vh - 80px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div>
-                  <h2>Lent Items</h2>
-                  <p>This page will show your lent items.</p>
-                </div>
-              </div>
+              <LentItemsPage />
             </ProtectedRoute>
           } />
           
