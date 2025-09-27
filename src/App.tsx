@@ -1,84 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Layout/Header';
 import Dashboard from '@/pages/Dashboard';
-import { authHelpers } from '@/lib/supabase';
-import type { AuthUser } from '@/types';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
+import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
-const App: React.FC = () => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Initialize authentication state
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const { user: currentUser, error: userError } = await authHelpers.getCurrentUser();
-        
-        if (userError) {
-          console.error('Error getting current user:', userError);
-          setError('Failed to authenticate user');
-        } else if (currentUser) {
-          setUser({
-            id: currentUser.id,
-            email: currentUser.email || '',
-            name: currentUser.user_metadata?.name || '',
-            avatar_url: currentUser.user_metadata?.avatar_url,
-          });
-        }
-      } catch (err) {
-        console.error('Authentication initialization error:', err);
-        setError('Authentication system unavailable');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = authHelpers.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            name: session.user.user_metadata?.name || '',
-            avatar_url: session.user.user_metadata?.avatar_url,
-          });
-          setError(null);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setError(null);
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const handleSignOut = async () => {
-    try {
-      setLoading(true);
-      const { error: signOutError } = await authHelpers.signOut();
-      
-      if (signOutError) {
-        console.error('Error signing out:', signOutError);
-        setError('Failed to sign out');
-      } else {
-        setUser(null);
-        setError(null);
-      }
-    } catch (err) {
-      console.error('Sign out error:', err);
-      setError('Sign out failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+const AppContent: React.FC = () => {
+  const { user, signOut, loading, error } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -131,21 +62,43 @@ const App: React.FC = () => {
     );
   }
 
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth';
+
   return (
-    <Router>
-      <div className="app">
-        <Header user={user} onSignOut={handleSignOut} />
-        
-        <main>
-          <Routes>
-            {/* Default route - redirect to dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            
-            {/* Dashboard route */}
-            <Route path="/dashboard" element={<Dashboard user={user} />} />
-            
-            {/* Placeholder routes for future implementation */}
-            <Route path="/borrowed" element={
+    <div className="app">
+      <Header user={user} onSignOut={signOut} showNavigation={!isAuthPage} />
+      
+      <main>
+        <Routes>
+          {/* Public routes (redirect to dashboard if authenticated) */}
+          <Route path="/login" element={
+            <ProtectedRoute requireAuth={false}>
+              <LoginPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/register" element={
+            <ProtectedRoute requireAuth={false}>
+              <RegisterPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Alias for auth - both routes show the same unified form */}
+          <Route path="/auth" element={
+            <ProtectedRoute requireAuth={false}>
+              <LoginPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Protected routes (require authentication) */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard user={user} />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/borrowed" element={
+            <ProtectedRoute>
               <div style={{ 
                 padding: '2rem', 
                 textAlign: 'center',
@@ -160,9 +113,11 @@ const App: React.FC = () => {
                   <p>This page will show your borrowed items.</p>
                 </div>
               </div>
-            } />
-            
-            <Route path="/lent" element={
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/lent" element={
+            <ProtectedRoute>
               <div style={{ 
                 padding: '2rem', 
                 textAlign: 'center',
@@ -177,9 +132,11 @@ const App: React.FC = () => {
                   <p>This page will show your lent items.</p>
                 </div>
               </div>
-            } />
-            
-            <Route path="/groups" element={
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/groups" element={
+            <ProtectedRoute>
               <div style={{ 
                 padding: '2rem', 
                 textAlign: 'center',
@@ -194,13 +151,30 @@ const App: React.FC = () => {
                   <p>This page will show your groups.</p>
                 </div>
               </div>
-            } />
-            
-            {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </main>
-      </div>
+            </ProtectedRoute>
+          } />
+          
+          {/* Default route - redirect based on auth status */}
+          <Route path="/" element={
+            user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+          } />
+          
+          {/* Catch all route */}
+          <Route path="*" element={
+            user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+          } />
+        </Routes>
+      </main>
+    </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 };

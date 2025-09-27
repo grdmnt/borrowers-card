@@ -124,6 +124,16 @@ export const authHelpers = {
     return { data, error };
   },
 
+  signInWithGoogle: async () => {
+    const { data, error } = await auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+    return { data, error };
+  },
+
   signOut: async () => {
     const { error } = await auth.signOut();
     return { error };
@@ -144,8 +154,17 @@ export const authHelpers = {
   },
 
   getCurrentUser: async () => {
-    const { data: { user }, error } = await auth.getUser();
-    return { user, error };
+    try {
+      const { data: { user }, error } = await auth.getUser();
+      // Handle session missing as normal (not an error for logged out users)
+      if (error && (error.message?.includes('session missing') || error.message?.includes('Auth session missing'))) {
+        return { user: null, error: null };
+      }
+      return { user, error };
+    } catch (err) {
+      // Handle any other errors
+      return { user: null, error: err };
+    }
   },
 
   getCurrentSession: async () => {
