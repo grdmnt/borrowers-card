@@ -6,6 +6,8 @@ import Dashboard from '@/pages/Dashboard';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import BorrowedItemsPage from '@/pages/BorrowedItemsPage';
+import GroupsPage from '@/pages/GroupsPage';
+import JoinGroupPage from '@/pages/JoinGroupPage';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
 const AppContent: React.FC = () => {
@@ -64,10 +66,14 @@ const AppContent: React.FC = () => {
   }
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/auth';
+  const isInvitePage = location.pathname.startsWith('/join-group/');
+  
+  // For invite pages, show navigation only if user is authenticated
+  const shouldShowNavigation = isInvitePage ? !!user : !isAuthPage;
 
   return (
     <div className="app">
-      <Header user={user} onSignOut={signOut} showNavigation={!isAuthPage} />
+      <Header user={user} onSignOut={signOut} showNavigation={shouldShowNavigation} />
       
       <main>
         <Routes>
@@ -125,22 +131,12 @@ const AppContent: React.FC = () => {
           
           <Route path="/groups" element={
             <ProtectedRoute>
-              <div style={{ 
-                padding: '2rem', 
-                textAlign: 'center',
-                backgroundColor: 'var(--color-background)',
-                minHeight: 'calc(100vh - 80px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div>
-                  <h2>Groups</h2>
-                  <p>This page will show your groups.</p>
-                </div>
-              </div>
+              <GroupsPage />
             </ProtectedRoute>
           } />
+
+          {/* Join Group via invite link - accessible to everyone */}
+          <Route path="/join-group/:groupId" element={<JoinGroupPage />} />
           
           {/* Default route - redirect based on auth status */}
           <Route path="/" element={

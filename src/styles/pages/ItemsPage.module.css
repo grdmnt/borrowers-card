@@ -6,7 +6,6 @@
 }
 
 .pageContent {
-  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 var(--space-4);
@@ -17,18 +16,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
-  padding: var(--space-4);
+  min-height: calc(100vh - 80px);
+  padding: var(--space-6);
 }
 
 .authMessage {
   text-align: center;
-  background-color: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-lg);
-  max-width: 500px;
+  max-width: 400px;
 }
 
 .authMessage h2 {
@@ -301,4 +295,47 @@
 .errorDescription {
   color: var(--color-text-secondary);
   font-size: var(--text-base);
+}
+
+/* Invite Card Styles */
+.inviteCard {
+  max-width: 400px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.inviteCard h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.inviteCard p {
+  margin: 0 0 16px 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.inviteCard .groupStats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.inviteCard .signInPrompt {
+  margin-bottom: 20px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.inviteCard .disclaimer {
+  margin-top: 20px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
 }

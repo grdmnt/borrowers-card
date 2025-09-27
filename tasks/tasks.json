@@ -116,7 +116,7 @@
         "description": "Create functionality for managing lending groups and circles",
         "details": "- Create group creation form and functionality\n- Implement group listing and management page\n- Add member invitation system via email\n- Create group member management (add/remove members)\n- Implement group-specific item tracking\n- Add group activity feed and notifications\n- Create group settings and permissions\n- Implement group admin and member roles\n- Add group statistics and analytics\n- Style group components with library theme",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -245,7 +245,7 @@
     ],
     "metadata": {
       "created": "2025-09-27T05:32:10.315Z",
-      "updated": "2025-09-27T08:23:27.202Z",
+      "updated": "2025-09-27T08:39:28.274Z",
       "description": "Main development tasks for Borrower's Card project"
     }
   }

@@ -102,10 +102,18 @@ const BorrowedItemForm: React.FC<BorrowedItemFormProps> = ({
     try {
       let result;
       
+      // Clean the form data - convert empty strings to undefined for optional fields
+      const cleanedData = {
+        ...formData,
+        description: formData.description?.trim() || undefined,
+        due_date: formData.due_date?.trim() || undefined,
+        notes: formData.notes?.trim() || undefined,
+      };
+      
       if (mode === 'create') {
-        result = await borrowedItemsService.createBorrowedItem(formData);
+        result = await borrowedItemsService.createBorrowedItem(cleanedData);
       } else if (item) {
-        const updates: UpdateBorrowedItemData = { ...formData };
+        const updates: UpdateBorrowedItemData = { ...cleanedData };
         result = await borrowedItemsService.updateBorrowedItem(item.id, updates);
       }
 

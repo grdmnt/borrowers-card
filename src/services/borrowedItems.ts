@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { groupsService } from './groups';
 
 // Types for borrowed items
 export interface BorrowedItem {
@@ -133,9 +134,10 @@ class BorrowedItemsService {
   // Create a new borrowed item
   async createBorrowedItem(itemData: CreateBorrowedItemData): Promise<{ data: BorrowedItem | null; error: string | null }> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        return { data: null, error: 'User not authenticated' };
+      // Ensure user profile exists first
+      const { user, error: profileError } = await groupsService.ensureUserProfile();
+      if (profileError || !user) {
+        return { data: null, error: profileError || 'User not authenticated' };
       }
 
       const { data, error } = await supabase
