@@ -1,0 +1,267 @@
+/* Card Base Styles */
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Card Variants */
+.default {
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.elevated {
+  border: 1px solid rgba(109, 76, 65, 0.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.outlined {
+  border: 2px solid var(--color-border);
+  box-shadow: none;
+}
+
+.flat {
+  border: none;
+  box-shadow: none;
+  background-color: rgba(245, 245, 220, 0.3);
+}
+
+/* Card Padding */
+.padding-none {
+  padding: 0;
+}
+
+.padding-sm {
+  padding: var(--space-3);
+}
+
+.padding-md {
+  padding: var(--space-4);
+}
+
+.padding-lg {
+  padding: var(--space-6);
+}
+
+/* Interactive States */
+.hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.clickable {
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+}
+
+.clickable:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(109, 76, 65, 0.2);
+}
+
+.clickable:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.clickable:active {
+  transform: translateY(0);
+}
+
+/* Card Structure Components */
+.header {
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-family: var(--font-secondary);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.3;
+  text-transform: capitalize;
+}
+
+.subtitle {
+  font-family: var(--font-primary);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.content {
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+.content p {
+  margin: 0 0 var(--space-3) 0;
+}
+
+.content p:last-child {
+  margin-bottom: 0;
+}
+
+.footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* Image Container */
+.imageContainer {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(109, 76, 65, 0.05);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.hover:hover .image {
+  transform: scale(1.05);
+}
+
+/* Aspect Ratios */
+.aspect-1\:1 {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-4\:3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-16\:9 {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-auto {
+  aspect-ratio: auto;
+}
+
+/* Card with image adjustments */
+.card:has(.imageContainer) .header,
+.card:has(.imageContainer) .content,
+.card:has(.imageContainer) .footer {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.card:has(.imageContainer) .header {
+  padding-top: var(--space-4);
+}
+
+.card:has(.imageContainer) .footer {
+  padding-bottom: var(--space-4);
+}
+
+/* Library Card Aesthetic Enhancements */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent) 0%,
+    var(--color-primary) 50%,
+    var(--color-accent) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hover:hover::before,
+.clickable:hover::before {
+  opacity: 1;
+}
+
+/* Card Grid Layout Support */
+.card[data-grid] {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card[data-grid] .content {
+  flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .padding-lg {
+    padding: var(--space-4);
+  }
+  
+  .padding-md {
+    padding: var(--space-3);
+  }
+  
+  .title {
+    font-size: var(--text-lg);
+  }
+  
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .default,
+  .outlined {
+    border-width: 3px;
+  }
+  
+  .elevated {
+    border-width: 2px;
+    border-color: var(--color-border);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .image {
+    transition: none;
+  }
+  
+  .hover:hover {
+    transform: none;
+  }
+  
+  .hover:hover .image {
+    transform: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
